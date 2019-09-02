@@ -1,6 +1,6 @@
-# cyhy_script #
+# cyhy_scripts #
 
-This project contains miscelanneous scripts for CyHy tasks.
+This project contains miscellaneous scripts for CyHy tasks.
 
 ## Contributing ##
 
