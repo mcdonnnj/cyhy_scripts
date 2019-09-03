@@ -60,12 +60,11 @@ with open(csv_file, "r") as f:
 
         count_values["total_domains"] += 1
 
-        is_base_domain = row["Domain"] == row["Base Domain"]
-
         valid_dmarc = row["Valid DMARC"] or row["Valid DMARC Record on Base Domain"]
         valid_dmarc_policy_reject = valid_dmarc and (row["DMARC Policy"] == "reject")
         valid_dmarc_subdomain_policy_reject = valid_dmarc and (
-            not is_base_domain or (row["DMARC Subdomain Policy"] == "reject")
+            not row["Domain Is Base Domain"]
+            or (row["DMARC Subdomain Policy"] == "reject")
         )
         valid_dmarc_policy_pct = valid_dmarc and (
             row["DMARC Policy Percentage"] == "100"
@@ -76,7 +75,7 @@ with open(csv_file, "r") as f:
             and valid_dmarc_policy_pct
         )
 
-        if is_base_domain:
+        if row["Domain Is Base Domain"]:
             spf_covered = row["Valid SPF"]
         else:
             spf_covered = row["Valid SPF"] or (
@@ -97,7 +96,9 @@ with open(csv_file, "r") as f:
             and valid_dmarc_bod1801_rua_url
         )
 
-        if is_base_domain or (not is_base_domain and row["Domain Supports SMTP"]):
+        if row["Domain Is Base Domain"] or (
+            not row["Domain Is Base Domain"] and row["Domain Supports SMTP"]
+        ):
             count_values["domains_checked"] += 1
             if (row["Domain Supports SMTP"] and row["Domain Supports STARTTLS"]) or (
                 not row["Domain Supports SMTP"]
@@ -127,7 +128,7 @@ with open(csv_file, "r") as f:
                         else:
                             count_values["dmarc_invalid"] += 1
                             message = [
-                                f"\tBase Domain: {is_base_domain}",
+                                f"\tBase Domain: {row['Domain Is Base Domain']}",
                                 f"\tValid DMARC: {valid_dmarc}",
                                 f"\tDMARC Policy: \"{row['DMARC Policy']}\"",
                                 f"\tDMARC Subdomain Policy: \"{row['DMARC Subdomain Policy']}\"",
