@@ -53,9 +53,9 @@ with open(csv_file, "r") as f:
         for k, v in row.items():
             if v is None:
                 continue
-            if v.strip() == "True":
+            if v.strip().lower() == "true":
                 row[k] = True
-            elif v.strip() == "False":
+            elif v.strip().lower() == "false":
                 row[k] = False
 
         count_values["total_domains"] += 1
